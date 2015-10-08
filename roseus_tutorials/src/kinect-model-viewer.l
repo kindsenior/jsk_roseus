@@ -208,9 +208,9 @@
 
 (defmethod kinect-bvh-robot-model
   (:copy-state-from-tf
-   (tf-listener)
+   (tf-listener &key (max-user-index 4))
    (let (from to m (tm (ros::time)) (ret t) (last-time))
-     (dotimes (i 4)
+     (dotimes (i max-user-index)
        (setq last-time (send tf-listener :get-latest-common-time "map" (format nil "/torso_~d" i)))
        (if last-time (setq last-time (send (ros::time- (ros::time-now) last-time) :to-sec)))
        (when (and last-time (< last-time 1))
@@ -237,7 +237,7 @@
 #-:ros
 (unless (find-package "ROS") (make-package "ROS"))
 #+:ros
-(defun test-kinect (&key robot fname loop-hook) ;; :fname "test-kinect.bvh", loop-hook is a function to call inside do-until-key loop
+(defun test-kinect (&key robot fname loop-hook (max-user-index 4)) ;; :fname "test-kinect.bvh", loop-hook is a function to call inside do-until-key loop
   (let ((floor (make-cube 2000 1000 10 :pos #f(1000 0 0))) f)
     (if fname (setq f (open fname :direction :output)))
     (ros::roseus "kinect_bvh")
@@ -253,7 +253,7 @@
     ;;;
     (do-until-key
      (let ()
-       (when (send b :copy-state-from-tf *tl*) ;; copy kinect human tracker information to human body
+       (when (send b :copy-state-from-tf *tl* :max-user-index max-user-index) ;; copy kinect human tracker information to human body
          ;;
          ;; track human body
          ;;
