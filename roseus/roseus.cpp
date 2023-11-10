@@ -75,6 +75,8 @@
 #include <ros/param.h>
 #include <ros/callback_queue.h>
 
+#include <console_bridge/console.h>
+
 // for eus.h
 #define class   eus_class
 #define throw   eus_throw
@@ -2171,6 +2173,7 @@ pointer ___roseus(register context *ctx, int n, pointer *argv, pointer env)
   ros::master::init(remappings);
   //ros::param::init(remappings);
 
+  console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_ERROR);
   return 0;
 }
 
